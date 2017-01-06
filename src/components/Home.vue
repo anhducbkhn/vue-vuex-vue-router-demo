@@ -3,36 +3,30 @@
 	<div>
 	Home Page
 	<ul>
-		<li v-for="n in listOfServices()">
-			{{ n.service_name }}
+		<li v-for="n in listServices">
+			{{ n.service_name }} Price: {{ n.price }}
 		</li>
 	</ul>
-	{{ msg }}
 	</div>
 </template>
 <script>
 /* eslint-disable */
 import { mapState } from 'vuex';
+var request = require('superagent');
 
 export default {
   name: 'app',
-  data () {
-    return {
-      msg: 'aaaaa',
-      listOfServices: function () {
-        const listServices = this.$store.getters.getListServiceHomePage;
-        console.log(listServices);
-        return listServices;
-      }
-    }
-  },
   computed: {
     ...mapState({
-      listServices: function () {
-        console.log('a');	
-        const listServices = this.$store.getters.getListServiceHomePage;
-        console.log(listServices);
-        return listServices;
+       listServices: function () {
+         request.get("https://demo6600464.mockable.io/services.json").end((err, res) => {
+          if (res) {
+            this.$store.dispatch('getListServiceHomePage', res.body);
+          }
+        });
+
+        let listServicesHomePage1 = this.$store.getters.getListServiceHomePage;
+        return listServicesHomePage1;
       },
     }),
   },
